@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
 setup(
-    name = 'pmd_daubi_bot',
+    name = 'pmd_food_diary_bot',
     packages = find_packages(),
 )
