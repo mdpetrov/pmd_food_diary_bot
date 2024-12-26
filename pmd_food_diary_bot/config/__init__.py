@@ -1,1 +1,1 @@
-from pmd_daubi_bot.config import config 
+from pmd_food_diary_bot.config import config 

@@ -1,20 +1,21 @@
 import json
-import os
+from os.path import join, isfile
 import time
 
 class ParamsOperations(object):
+    """Class to store user related technical params"""
     def __init__(self, config):
         self.def_params = {'last_time_message_sent':0,
-                           'add_record_state':{}}
+                           'record_to_add':{}}
         self.config = config
 
     def load_params(self, chat_id):
         '''Load json with local parameters for the chat'''
         path = self.config.path
-        param_dir = path['data_dir']
-        param_name = f"{chat_id}.param"
-        param_path = os.path.join(param_dir, param_name)
-        if os.path.isfile(param_path):
+        param_dir = path['param_dir']
+        param_name = f"{chat_id}.json"
+        param_path = join(param_dir, param_name)
+        if isfile(param_path):
             with open(param_path, 'r') as fp:
                 params = json.load(fp)
             if not isinstance(params, dict):
@@ -35,8 +36,8 @@ class ParamsOperations(object):
     \tChat id: {chat_id}'''
     # \tChat name: {chat_id} # Will be added in future
             raise TypeError(error_text)
-        param_dir = self.config.path['data_dir']
-        param_name = f"{chat_id}.param"
-        param_path = os.path.join(param_dir, param_name)
+        param_dir = self.config.path['param_dir']
+        param_name = f"{chat_id}.json"
+        param_path = join(param_dir, param_name)
         with open(param_path, 'w') as fp:
             params = json.dump(params, fp)
