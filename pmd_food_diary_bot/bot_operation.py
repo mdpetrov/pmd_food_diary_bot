@@ -5,7 +5,7 @@ class BotOperations(object):
     def __init__(self, bot, config):
         self.bot = bot
         self.config = config
-        self.PO = ParamOperations(config)
+        self.PO = ParamsOperations(config)
     def send_message(self, chat_id, text, sleep=0.5, **kwargs):
         ''' Send a message with certain delay '''
         bot = self.bot
