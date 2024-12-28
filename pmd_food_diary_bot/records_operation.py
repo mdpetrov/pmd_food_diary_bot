@@ -44,7 +44,7 @@ class RecordsOperations(object):
         {fields_readable_s}'''
         BO.send_message(chat_id=chat.id, text=message_text)
         BO.clear_step_handler(message)
-        BO.register_next_step_handler(message, RO.compose_record)
+        BO.register_next_step_handler(message, self.compose_record)
     def compose_record(self, message):
         chat = message.chat
         BO = self.BO
