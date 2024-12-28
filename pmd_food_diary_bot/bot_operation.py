@@ -1,5 +1,5 @@
 import time
-from pmd_food_diary_bot.params_operation import ParamOperations
+from pmd_food_diary_bot.params_operation import ParamsOperations
 
 class BotOperations(object):
     def __init__(self, bot, config):
