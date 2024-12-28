@@ -10,6 +10,12 @@ import numpy as np
 import pandas as pd
 import re
 
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='./.secret/log/log.log', level=logging.INFO,
+                    format='%(asctime)s. %(levelname)s %(module)s - %(funcName)s: %(message)s')
+
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Custom packages
@@ -52,9 +58,9 @@ def get_message_add_record(message):
 if __name__ == '__main__':
     while True:
         try:
-            LO.write_log(0, 'Restart the bot')
+            logger.info('Restart the bot')
             bot.polling(none_stop=True, interval=1) #обязательная для работы бота часть
         except Exception as e:
-            LO.write_log(0, 'Error in execution')
-            LO.write_log(0, e)
+            logger.error('Error in execution')
+            logging.error(e, exc_info=True)
             time.sleep(1*60) # 1 minute
