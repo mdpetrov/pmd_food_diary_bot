@@ -20,5 +20,5 @@ class BotOperations(object):
         return message
     def clear_step_handler(self, message):
         self.bot.clear_step(message)
-    def register_next_step_handler(self, message: Message, callback: Callable, *args, **kwargs):
+    def register_next_step_handler(self, message, callback, *args, **kwargs):
         self.bot.register_next_step_handler(message, callback, *args, **kwargs)
