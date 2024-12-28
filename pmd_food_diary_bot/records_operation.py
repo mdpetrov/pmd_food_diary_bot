@@ -25,7 +25,7 @@ class RecordsOperations(object):
         return records
     def save_records(self, chat, records):
         """Save user records"""
-        record_dir = self.config.path['data_dir']
+        record_dir = self.config.path['record_dir']
         record_name = f"{chat.id}_{chat.username}.json"
         record_path = join(record_dir, record_name)
         with open(record_path, 'w') as fp:
