@@ -50,7 +50,7 @@ class RecordsOperations(object):
         BO = self.BO
         record_fields = list(self.config.record_fields_input.keys())
 
-        values_to_add = [x.strip() for x in message.split(';')]
+        values_to_add = [x.strip() for x in message.text.split(';')]
         record = dict(zip(record_fields, values_to_add))
         self.add_record(chat=chat, record=record)
         message_text = 'Запись добавлена!'
