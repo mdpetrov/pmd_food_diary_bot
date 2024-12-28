@@ -19,6 +19,6 @@ class BotOperations(object):
         PO.save_params(chat_id=chat_id, params=params)
         return message
     def clear_step_handler(self, message):
-        self.bot.clear_step(message)
+        self.bot.clear_step_handler(message)
     def register_next_step_handler(self, message, callback, *args, **kwargs):
         self.bot.register_next_step_handler(message, callback, *args, **kwargs)
