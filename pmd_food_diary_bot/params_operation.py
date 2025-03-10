@@ -6,11 +6,11 @@ class ParamsOperations(object):
     """Class to store user related technical params"""
     def __init__(self, config):
         self.def_params = {'last_time_message_sent':0,
-                           'record_to_add':{}}
+                           'add_record':{}}
         self.config = config
 
     def load_params(self, chat_id):
-        '''Load json with local parameters for the chat'''
+        """Load json with local parameters for the chat"""
         path = self.config.path
         param_dir = path['param_dir']
         param_name = f"{chat_id}.json"
@@ -29,7 +29,7 @@ class ParamsOperations(object):
         return params
 
     def save_params(self, chat_id, params):
-        '''Save json with local parameters for the chat'''
+        """Save json with local parameters for the chat"""
         if not isinstance(params, dict):
             error_text = f'''Params object has type {type(params)} instead of {type(dict)}
     Debug info:
@@ -40,4 +40,4 @@ class ParamsOperations(object):
         param_name = f"{chat_id}.json"
         param_path = join(param_dir, param_name)
         with open(param_path, 'w') as fp:
-            params = json.dump(params, fp)
+            json.dump(params, fp)
