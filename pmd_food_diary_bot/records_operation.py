@@ -48,7 +48,7 @@ class AddRecord(RecordsOperations):
         elif step == 2:
             self.step1_action(params)
             self.step2_pre(params, chat_id)
-            self.BO.register_next_step_handler(message=params['add_record']['main_message'], callback=self.step2_action, params=params)
+            self.BO.register_next_step_handler_by_chat_id(chat_id=chat.id, callback=self.step2_action, params=params)
         # elif step == 3:
             # self.step2_action(params)
             # self.step3_action(params)  # add save record
@@ -57,16 +57,16 @@ class AddRecord(RecordsOperations):
 
     def step1_pre(self, params, chat_id):
         step_name = self.config.add_record_steps[0]
-        main_message = params['add_record'].setdefault('main_message', None)
-        if not isinstance(main_message, type(None)):
-            self.BO.delete_message(chat_id, main_message.message_id)
+        main_message_id = params['add_record'].setdefault('main_message_id', 0)
+        if main_message_id > 0:
+            self.BO.delete_message(chat_id, main_message_id)
         message_text = 'Добавление записи. Шаг 1. Выбери время'
         options_d = self.config.add_record_options[step_name]
         options = list(options_d.values())
         callbacks = [f"add_record_step_1_{x}" for x in options_d.keys()]
         markup = self.BO.quick_markup(options, callbacks)
         message = self.BO.send_message(chat_id=chat_id, text=message_text, reply_markup=markup)
-        params['add_record']['main_message'] = message
+        params['add_record']['main_message_id'] = message.id
 
     def step1_action(self, params):
         step_name = self.config.add_record_steps[0]
@@ -75,10 +75,10 @@ class AddRecord(RecordsOperations):
         params['add_record']['tmp_record'] = tmp_record
 
     def step2_pre(self, params, chat_id):
-        main_message = params['add_record'].setdefault('main_message', None)
+        main_message_id = params['add_record'].setdefault('main_message_id', 0)
         message_text = 'Время зафиксировал! Теперь введи название записи:'
-        if not isinstance(main_message, type(None)):
-            self.BO.edit_message(chat_id=chat_id, message_id=main_message.message_id, text=message_text)
+        if main_message_id > 0:
+            self.BO.edit_message(chat_id=chat_id, message_id=main_message_id, text=message_text)
         else:
             raise NotImplementedError('Main message has not been found on step 2. Something is wrong')
 

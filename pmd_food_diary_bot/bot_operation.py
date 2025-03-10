@@ -34,6 +34,9 @@ class BotOperations(object):
     def register_next_step_handler(self, message, callback, *args, **kwargs):
         self.bot.register_next_step_handler(message, callback, *args, **kwargs)
 
+    def register_next_step_handler_by_chat_id(self, chat_id, callback, *args, **kwargs):
+        self.bot.register_next_step_handler_by_chat_id(chat_id=chat_id, callback=callback, *args, **kwargs)
+
     @staticmethod
     def quick_markup(options: list, callback: list, row_width=2):
         if len(options) != len(callback):
