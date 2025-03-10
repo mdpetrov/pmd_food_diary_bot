@@ -53,7 +53,7 @@ class AddRecord(RecordsOperations):
             # self.step2_action(params)
             # self.step3_action(params)  # add save record
 
-        self.PO.save_params(params, chat_id)
+        self.PO.save_params(params=params, chat_id=chat_id)
 
     def step1_pre(self, params, chat_id):
         step_name = self.config.add_record_steps[0]
