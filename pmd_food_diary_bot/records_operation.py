@@ -61,7 +61,7 @@ class AddRecord(RecordsOperations):
         if not isinstance(main_message, type(None)):
             self.BO.delete_message(chat_id, main_message.message_id)
         message_text = 'Добавление записи. Шаг 1. Выбери время'
-        options_d = self.config['add_record_options'][step_name]
+        options_d = self.config.add_record_options[step_name]
         options = list(options_d.values())
         callbacks = [f"add_record_step_1_{x}" for x in options_d.keys()]
         markup = self.BO.quick_markup(options, callbacks)
@@ -75,7 +75,6 @@ class AddRecord(RecordsOperations):
         params['add_record']['tmp_record'] = tmp_record
 
     def step2_pre(self, params, chat_id):
-        # step_name = self.config['add_record_steps'][1]
         main_message = params['add_record'].setdefault('main_message', None)
         message_text = 'Время зафиксировал! Теперь введи название записи:'
         if not isinstance(main_message, type(None)):
