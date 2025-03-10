@@ -41,9 +41,9 @@ class AddRecord(RecordsOperations):
     def main(self, chat):
         chat_id = chat.id
         params = self.PO.load_params(chat)
-        step = params['add_record'].setdefault('step', 0)
-        step += 1
-        params['add_record']['step'] = step
+        step = params['add_record'].setdefault('step', 1)
+        # step += 1
+        # params['add_record']['step'] = step
         # main_message_id = params['add_record'].setdefault('main_message_id', None)
         if step == 1:
             self.step1_pre(params, chat)
