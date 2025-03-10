@@ -65,7 +65,7 @@ class AddRecord(RecordsOperations):
         options = list(options_d.values())
         callbacks = [f"add_record_step_1_{x}" for x in options_d.keys()]
         markup = self.BO.quick_markup(options, callbacks)
-        message = self.BO.send_message(chat_id=chat_id, text=message_text, markup=markup)
+        message = self.BO.send_message(chat_id=chat_id, text=message_text, reply_markup=markup)
         params['add_record']['main_message'] = message
 
     def step1_action(self, params):
