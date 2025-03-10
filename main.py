@@ -59,6 +59,19 @@ def get_message_add_record(message):
 
     AR.main(chat=message.chat)
 
+@bot.message_handler(commands=['show_records'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
+def get_message_show_records(message):
+    records = AR.load_records(chat=message.chat)
+    text_split = []
+    # records.insert(0, ['#', 'Время', 'Запись'])
+
+    for i,record in enumerate(records[1:]):
+        if i == 0:
+            text_split.append(['#', 'Время', 'Запись'])
+        text_split.append([i] + record)
+    text = '\n'.join(['\t'.join(x) for x in text_split])
+    text = f"Список записей: \n{text}"
+    BO.send_message(message.chat, text=text)
 
 @bot.callback_query_handler(func=lambda call: (call.data.find('add_record_step_') >= 0) &
                                               (time.time() - call.message.date <= 60 * 60 * 24))
