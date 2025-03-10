@@ -88,7 +88,7 @@ class AddRecord(RecordsOperations):
         user_value = message.text
         params['add_record']['user_value'] = user_value
 
-        step_name = self.config['add_record_steps'][1]
+        step_name = self.config.add_record_steps[1]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
         tmp_record[step_name] = user_value
         params['add_record']['tmp_record'] = tmp_record
