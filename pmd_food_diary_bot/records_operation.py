@@ -63,10 +63,12 @@ class AddRecord(RecordsOperations):
         main_message_id = params['add_record'].setdefault('main_message_id', 0)
         if main_message_id > 0:
             self.BO.delete_message(chat_id, main_message_id)
-        message_text = 'Добавление записи. Шаг 1. Выбери время'
+        message_text = 'Добавление записи. Выбери время'
         options_d = self.config.add_record_options[step_name]
         options = list(options_d.values())
         callbacks = [f"add_record_step_1_{x}" for x in options_d.keys()]
+        options.append('Отменить'); callbacks.append('Undo')
+
         markup = self.BO.quick_markup(options, callbacks)
         message = self.BO.send_message(chat=chat, text=message_text, reply_markup=markup)
         params['add_record']['main_message_id'] = message.id
@@ -74,7 +76,7 @@ class AddRecord(RecordsOperations):
     def step1_action(self, params):
         step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
-        interval = datetime.now() - relativedelta(minutes = params['add_record']['user_value'])
+        interval = datetime.now() - relativedelta(minutes = int(params['add_record']['user_value']))
         tmp_record[step_name] = interval.strftime('%Y-%m-%d %H:%M')
         params['add_record']['tmp_record'] = tmp_record
 
