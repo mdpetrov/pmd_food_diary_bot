@@ -9,17 +9,18 @@ class BotOperations(object):
         self.config = config
         self.PO = ParamsOperations(config)
 
-    def send_message(self, chat_id, text, sleep=0.5, **kwargs):
+    def send_message(self, chat, text, sleep=0.5, **kwargs):
         """ Send a message with certain delay """
+        chat_id = chat.id
         bot = self.bot
         PO = self.PO
-        params = PO.load_params(chat_id=chat_id)
+        params = PO.load_params(chat=chat)
         interval = time.time() - params['last_time_message_sent']
         if interval < sleep:
             time.sleep(sleep - interval)
         message = bot.send_message(chat_id, text, **kwargs)
         params['last_time_message_sent'] = time.time()
-        PO.save_params(chat_id=chat_id, params=params)
+        PO.save_params(chat=chat, params=params)
         return message
 
     def edit_message(self, chat_id, message_id, text, **kwargs):

@@ -1,6 +1,8 @@
 from os.path import join, isfile
 import time
 import json
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 from pmd_food_diary_bot.params_operation import ParamsOperations
 from pmd_food_diary_bot.bot_operation import BotOperations
@@ -38,13 +40,13 @@ class RecordsOperations(object):
 class AddRecord(RecordsOperations):
     def main(self, chat):
         chat_id = chat.id
-        params = self.PO.load_params(chat.id)
+        params = self.PO.load_params(chat)
         step = params['add_record'].setdefault('step', 0)
         step += 1
         params['add_record']['step'] = step
         # main_message_id = params['add_record'].setdefault('main_message_id', None)
         if step == 1:
-            self.step1_pre(params, chat_id)
+            self.step1_pre(params, chat)
         elif step == 2:
             self.step1_action(params)
             self.step2_pre(params, chat_id)
@@ -53,9 +55,10 @@ class AddRecord(RecordsOperations):
             # self.step2_action(params)
             # self.step3_action(params)  # add save record
 
-        self.PO.save_params(params=params, chat_id=chat_id)
+        self.PO.save_params(params=params, chat=chat)
 
-    def step1_pre(self, params, chat_id):
+    def step1_pre(self, params, chat):
+        chat_id = chat.id
         step_name = self.config.add_record_steps[0]
         main_message_id = params['add_record'].setdefault('main_message_id', 0)
         if main_message_id > 0:
@@ -65,13 +68,14 @@ class AddRecord(RecordsOperations):
         options = list(options_d.values())
         callbacks = [f"add_record_step_1_{x}" for x in options_d.keys()]
         markup = self.BO.quick_markup(options, callbacks)
-        message = self.BO.send_message(chat_id=chat_id, text=message_text, reply_markup=markup)
+        message = self.BO.send_message(chat=chat, text=message_text, reply_markup=markup)
         params['add_record']['main_message_id'] = message.id
 
     def step1_action(self, params):
         step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
-        tmp_record[step_name] = params['add_record']['user_value']
+        interval = datetime.now() - relativedelta(minutes = params['add_record']['user_value'])
+        tmp_record[step_name] = interval.strftime('%Y-%m-%d %H:%M')
         params['add_record']['tmp_record'] = tmp_record
 
     def step2_pre(self, params, chat_id):
@@ -99,6 +103,6 @@ class AddRecord(RecordsOperations):
         records = records.append(tmp_record)
         self.save_records(chat=chat, records=records)
         params['add_record'] = {}
-        self.PO.save_params(params, chat.id)
-        self.BO.send_message(chat_id=chat.id,text='Успешно добавлено')
+        self.PO.save_params(params=params, chat=chat)
+        self.BO.send_message(chat=chat,text='Успешно добавлено')
 #

@@ -9,11 +9,13 @@ class ParamsOperations(object):
                            'add_record':{}}
         self.config = config
 
-    def load_params(self, chat_id):
+    def load_params(self, chat):
         """Load json with local parameters for the chat"""
+        chat_id = chat.id
+        chat_username = chat.username
         path = self.config.path
         param_dir = path['param_dir']
-        param_name = f"{chat_id}.json"
+        param_name = f"{chat_id}_{chat_username}.json"
         param_path = join(param_dir, param_name)
         if isfile(param_path):
             with open(param_path, 'r') as fp:
@@ -28,8 +30,10 @@ class ParamsOperations(object):
             params = self.def_params
         return params
 
-    def save_params(self, chat_id, params):
+    def save_params(self, chat, params):
         """Save json with local parameters for the chat"""
+        chat_id = chat.id
+        chat_username = chat.username
         if not isinstance(params, dict):
             error_text = f'''Params object has type {type(params)} instead of {type(dict)}
     Debug info:
@@ -37,7 +41,7 @@ class ParamsOperations(object):
     # \tChat name: {chat_id} # Will be added in future
             raise TypeError(error_text)
         param_dir = self.config.path['param_dir']
-        param_name = f"{chat_id}.json"
+        param_name = f"{chat_id}_{chat_username}.json"
         param_path = join(param_dir, param_name)
         with open(param_path, 'w') as fp:
             json.dump(params, fp)

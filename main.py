@@ -48,7 +48,7 @@ def get_message_start(message):
     /add_record - добавить запись
     /show_records - вывести список записей
 '''
-    BO.send_message(message.chat.id, text=start_text)
+    BO.send_message(message.chat, text=start_text)
 
 
 @bot.message_handler(commands=['add_record'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
@@ -59,7 +59,7 @@ def get_message_add_record(message):
 @bot.callback_query_handler(func=lambda call: (call.data.find('add_record_step_') >= 0) &
                                               (time.time() - call.date <= 60 * 60 * 24))
 def callback_add_record(call):
-    params = PO.load_params(call.chat.id)
+    params = PO.load_params(call.chat)
 
     data_split = call.data.split('_')
     # step = int(data_split[data_split.index('step') + 1])
@@ -67,7 +67,7 @@ def callback_add_record(call):
     # params['add_record']['step'] = step
     params['add_record']['user_value'] = user_value
 
-    PO.save_params(chat_id=call.chat.id, params=params)
+    PO.save_params(chat=call.chat, params=params)
 
     AR.main(chat=call.chat)
 
