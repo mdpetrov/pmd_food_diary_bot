@@ -53,6 +53,10 @@ def get_message_start(message):
 
 @bot.message_handler(commands=['add_record'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
 def get_message_add_record(message):
+    params = PO.load_params(message.chat)
+    params['add_record'] = {}
+    PO.save_params(chat=message.chat, params=params)
+
     AR.main(chat=message.chat)
 
 
