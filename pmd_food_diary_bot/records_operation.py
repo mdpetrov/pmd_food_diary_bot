@@ -56,7 +56,7 @@ class AddRecord(RecordsOperations):
         self.PO.save_params(params, chat_id)
 
     def step1_pre(self, params, chat_id):
-        step_name = self.config['add_record_steps'][0]
+        step_name = self.config.add_record_steps[0]
         main_message = params['add_record'].setdefault('main_message', None)
         if not isinstance(main_message, type(None)):
             self.BO.delete_message(chat_id, main_message.message_id)
@@ -69,7 +69,7 @@ class AddRecord(RecordsOperations):
         params['add_record']['main_message'] = message
 
     def step1_action(self, params):
-        step_name = self.config['add_record_steps'][0]
+        step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
         tmp_record[step_name] = params['add_record']['user_value']
         params['add_record']['tmp_record'] = tmp_record
