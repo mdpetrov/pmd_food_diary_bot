@@ -34,7 +34,7 @@ class RecordsOperations(object):
         record_name = f"{chat.id}_{chat.username}.json"
         record_path = join(record_dir, record_name)
         with open(record_path, 'w') as fp:
-            json.dump(records, fp)
+            json.dump(obj=records, fp=fp)
 
 
 class AddRecord(RecordsOperations):
@@ -102,7 +102,7 @@ class AddRecord(RecordsOperations):
     def step3_action(self, chat, params):
         records = self.load_records(chat=chat)
         tmp_record = params['add_record'].setdefault('tmp_record', {})
-        records = records.append(tmp_record)
+        records.append(tmp_record)
         self.save_records(chat=chat, records=records)
         params['add_record'] = {}
         self.PO.save_params(params=params, chat=chat)
