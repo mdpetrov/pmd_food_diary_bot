@@ -57,7 +57,7 @@ def get_message_add_record(message):
 
 
 @bot.callback_query_handler(func=lambda call: (call.data.find('add_record_step_') >= 0) &
-                                              (time.time() - call.date <= 60 * 60 * 24))
+                                              (time.time() - call.message.date <= 60 * 60 * 24))
 def callback_add_record(call):
     params = PO.load_params(call.chat)
 
