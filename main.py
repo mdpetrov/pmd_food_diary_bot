@@ -64,7 +64,7 @@ def callback_add_record(call):
     data_split = call.data.split('_')
     step = int(data_split[data_split.index('step') + 1])
     user_value = str(data_split[-1])
-    params['add_record']['step'] = step
+    params['add_record']['step'] = step + 1
     params['add_record']['user_value'] = user_value
 
     PO.save_params(chat=call.message.chat, params=params)
