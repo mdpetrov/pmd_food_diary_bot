@@ -53,9 +53,8 @@ class RecordsOperations(object):
         records_df = pd.DataFrame.from_dict(records)
         records_df['datetime'] = records_df.apply(self._set_local_timezone, axis=1, tzinfo=tzinfo)
 
+        records_df.index = records_df.index.map(lambda x: x + 1)
         records_df.columns = records_df.columns.map(column_locale_map)
-        records_df.reset_index(drop=False, inplace=True)
-        records_df.rename(columns={'index':'#'}, inplace=True)
 
         records_tab = tabulate(records_df, headers=records_df.columns)
         text = f"Список записей: \n\n{records_tab}"
