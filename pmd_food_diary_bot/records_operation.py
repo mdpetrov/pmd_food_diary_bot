@@ -12,6 +12,7 @@ from tabulate import tabulate
 
 from pmd_food_diary_bot.params_operation import ParamsOperations
 from pmd_food_diary_bot.bot_operation import BotOperations
+from pmd_food_diary_bot.output_text_operation import OutputTextOperation
 
 
 class RecordsOperations(object):
@@ -20,6 +21,7 @@ class RecordsOperations(object):
         self.def_records = []
         self.BO = BotOperations(bot=bot, config=config)
         self.PO = ParamsOperations(config=config)
+        self.OTO = OutputTextOperation(config=config)
 
     def load_records(self, chat):
         """Load user records"""

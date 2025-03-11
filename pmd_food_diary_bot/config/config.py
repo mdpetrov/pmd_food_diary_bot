@@ -6,6 +6,8 @@ record_fields_input = {'date': 'Дата (ГГГГ-ММ-ДД Ч:М)',
                        'record': 'Запись'}
 
 add_record_steps = ['datetime', 'user_record']
+add_record_steps_translation = {'ru':{'datetime':'Время',
+                                      'user_record':'Запись'}}
 add_record_options = {'datetime': {0: 'Прямо сейчас',
                                    10: '10 минут назад',
                                    30: '30 минут назад',

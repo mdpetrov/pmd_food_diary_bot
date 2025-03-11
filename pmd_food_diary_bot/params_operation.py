@@ -7,7 +7,8 @@ class ParamsOperations(object):
     def __init__(self, config):
         self.def_params = {'last_time_message_sent':0,
                            'add_record':{},
-                           'timezone':'Europe/Moscow'}
+                           'timezone':'Europe/Moscow',
+                           'locale':'ru'}
         self.config = config
 
     def load_params(self, chat):
