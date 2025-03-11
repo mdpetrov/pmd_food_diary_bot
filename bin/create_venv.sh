@@ -3,6 +3,9 @@
 prog_path=/usr/bot/pmd_food_diary_bot
 
 sudo apt install python3.10-venv
+
+rm -R $prog_path/venv
+
 python3 -m venv $prog_path/venv
 source $prog_path/venv/bin/activate
 pip install -r $prog_path/requirements.txt 
