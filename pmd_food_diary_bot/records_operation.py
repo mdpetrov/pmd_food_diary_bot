@@ -1,9 +1,14 @@
 from os.path import join, isfile
 import time
 import json
+
 from dateutil.relativedelta import relativedelta
+from dateutil import parser
 from datetime import datetime
 import pytz
+
+import pandas as pd
+from tabulate import tabulate
 
 from pmd_food_diary_bot.params_operation import ParamsOperations
 from pmd_food_diary_bot.bot_operation import BotOperations
@@ -37,6 +42,28 @@ class RecordsOperations(object):
         with open(record_path, 'w') as fp:
             json.dump(obj=records, fp=fp)
 
+    def show_records(self, chat):
+        params = self.PO.load_params(chat)
+        tzinfo = params['timezone']
+        column_locale_map = self.OTO.get_record_steps_name(chat=chat)
+
+        records = self.load_records(chat=chat)
+        records_df = pd.DataFrame.from_dict(records)
+        records_df.apply(self._set_local_timezone, axis=1, tzinfo=tzinfo)
+
+        records_df.columns = records_df.columns.map(column_locale_map)
+        records_df.reset_index(drop=False, inplace=True)
+        records_df.rename(columns={'index':'#'}, inplace=True)
+
+        records_tab = tabulate(records_df, headers=records_df.columns)
+        text = f"Список записей: \n\n{records_tab}"
+        self.BO.send_message(chat=chat, text=text)
+
+    @staticmethod
+    def _set_local_timezone(row, tzinfo):
+        dt_base = parser.parse(row['datetime'])
+        dt_local = dt_base.astimezone(pytz.timezone(tzinfo))
+        return dt_local.strftime('%Y-%m-%d %H:%M')
 
 class AddRecord(RecordsOperations):
     def main(self, chat):

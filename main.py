@@ -1,18 +1,16 @@
-import pytz
-import telebot
+import logging
+# import json
+import os
 # from telebot import types
 # from telebot.util import quick_markup
 # import random
-from datetime import datetime
-from dateutil import parser
+# from dateutil import parser
 import time
-# import json
-import os
-# import numpy as np
-# import pandas as pd
-# import re
 
-import logging
+import telebot
+
+# import numpy as np
+# import re
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='./.secret/log/log.log', level=logging.INFO,
@@ -26,7 +24,9 @@ from pmd_food_diary_bot.config import config
 from pmd_food_diary_bot.params_operation import ParamsOperations
 from pmd_food_diary_bot.log_operation import LogOperations
 from pmd_food_diary_bot.bot_operation import BotOperations
-from pmd_food_diary_bot.records_operation import AddRecord
+from pmd_food_diary_bot.records_operation import RecordsOperations, AddRecord
+
+# from pmd_food_diary_bot.output_text_operation import OutputTextOperation
 
 path = config.path
 # Open bot
@@ -38,12 +38,15 @@ bot = telebot.TeleBot(token, threaded=False)
 PO = ParamsOperations(config=config)
 LO = LogOperations(config=config)
 BO = BotOperations(bot=bot, config=config)
-# RO = RecordsOperations(config=config, bot=bot)
+RO = RecordsOperations(config=config, bot=bot)
 AR = AddRecord(config=config, bot=bot)
 
 
+# OTO = OutputTextOperation(config=config)
+
 @bot.message_handler(commands=['start'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
 def get_message_start(message):
+    PO.check_param_keys(chat=message.chat, add_only=True)
     start_text = '''Дневник питания 
 Список команд:
 /start - Главное меню
@@ -58,38 +61,23 @@ def get_message_start(message):
     BO.send_message(message.chat, text=start_text)
 
 
-@bot.message_handler(commands=['add_record'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
-def get_message_add_record(message):
-    params = PO.load_params(message.chat)
-    params['add_record'] = {}
-    PO.save_params(chat=message.chat, params=params)
-
-    AR.main(chat=message.chat)
-
-
-@bot.message_handler(commands=['show_records'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
-def get_message_show_records(message):
-    params = PO.load_params(message.chat)
-    tzinfo = params['timezone']
-    records = AR.load_records(chat=message.chat)
-    text_split = []
-
-    for i, record in enumerate(records):
-        if i == 0:
-            text_split.append(['#', 'Время', 'Запись'])
-        dt_base = parser.parse(record['datetime'])
-        dt_local = dt_base.astimezone(pytz.timezone(tzinfo))
-
-        record_corr = [str(i + 1), dt_local.strftime('%Y-%m-%d %H:%M'), record['user_record']]
-        text_split.append(record_corr)
-    text = '\n'.join(['\t\t'.join(x) for x in text_split])
-    text = f"Список записей: \n{text}"
-    BO.send_message(message.chat, text=text)
+@bot.message_handler(chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
+def get_message(message):
+    PO.check_param_keys(chat=message.chat, add_only=True)
+    if message.text == 'add_record':
+        params = PO.load_params(message.chat)
+        params['add_record'] = {}
+        PO.save_params(chat=message.chat, params=params)
+        AR.main(chat=message.chat)
+    elif message.text == 'show_records':
+        RO.show_records(chat=message.chat)
 
 
 @bot.callback_query_handler(func=lambda call: (call.data.find('add_record_') >= 0) &
                                               (time.time() - call.message.date <= 60 * 60 * 24))
 def callback_add_record(call):
+    PO.check_param_keys(chat=call.message.chat, add_only=True)
+
     params = PO.load_params(call.message.chat)
     data_split = call.data.split('_')
     if data_split[2] == 'terminate':
@@ -110,12 +98,6 @@ def callback_add_record(call):
 
     AR.main(chat=call.message.chat)
     bot.answer_callback_query(call.id)
-
-
-# @bot.callback_query_handler(func=lambda call: (call.data == 'add_record_terminate') &
-#                                               (time.time() - call.message.date <= 60 * 60 * 24))
-# def callback_add_record_terminate(call):
-#     pass
 
 
 if __name__ == '__main__':

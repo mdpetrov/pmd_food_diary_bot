@@ -46,3 +46,15 @@ class ParamsOperations(object):
         param_path = join(param_dir, param_name)
         with open(param_path, 'w') as fp:
             json.dump(params, fp)
+
+    def check_param_keys(self, chat, add_only=True):
+        params = self.load_params(chat)
+        def_params = self.def_params
+
+        for key in def_params.keys():
+            if add_only:
+                if not key in params.keys():
+                    params[key] = def_params[key]
+            else:
+                params[key] = def_params[key]
+        self.save_params(chat, params)
