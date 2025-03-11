@@ -32,6 +32,9 @@ class BotOperations(object):
     def clear_step_handler(self, message):
         self.bot.clear_step_handler(message)
 
+    def clear_step_handler_by_chat_id(self, chat_id: int | str):
+        self.bot.clear_step_handler_by_chat_id(chat_id=chat_id)
+
     def register_next_step_handler(self, message, callback, *args, **kwargs):
         self.bot.register_next_step_handler(message, callback, *args, **kwargs)
 

@@ -90,6 +90,10 @@ def callback_add_record(call):
     AR.main(chat=call.message.chat)
     bot.answer_callback_query(call.id)
 
+@bot.callback_query_handler(func=lambda call: (call.data == 'add_record_terminate') &
+                                              (time.time() - call.message.date <= 60 * 60 * 24))
+def callback_add_record_terminate(call):
+    AR.terminate(chat=call.message.chat, message_text='')
 
 if __name__ == '__main__':
     while True:
