@@ -72,13 +72,12 @@ def get_message_show_records(message):
     tzinfo = params['timezone']
     records = AR.load_records(chat=message.chat)
     text_split = []
-    # records.insert(0, ['#', 'Время', 'Запись'])
 
     for i,record in enumerate(records):
         if i == 0:
             text_split.append(['#', 'Время', 'Запись'])
         dt_base = parser.parse(record['datetime'])
-        dt_local = dt_base.astimezone(tzinfo)
+        dt_local = dt_base.astimezone(pytz.timezone(tzinfo))
 
         record_corr = [str(i + 1), dt_local.strftime('%Y-%m-%d %H:%M'), record['user_record']]
         text_split.append(record_corr)

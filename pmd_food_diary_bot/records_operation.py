@@ -75,6 +75,7 @@ class AddRecord(RecordsOperations):
         params['add_record']['main_message_id'] = message.id
 
     def step1_action(self, params, chat):
+        tzinfo = params['timezone']
         step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
         main_message_id = params['add_record']['main_message_id']
@@ -83,10 +84,12 @@ class AddRecord(RecordsOperations):
         minutes_back = int(params['add_record']['user_value'])
         interval = current_time - relativedelta(minutes=minutes_back)
         user_time = interval.strftime('%Y-%m-%d %H:%M %Z')
+
+        user_time_local = interval.astimezone(pytz.timezone(tzinfo)).strftime('%Y-%m-%d %H:%M %Z')
         tmp_record[step_name] = user_time
 
         markup = self.BO.quick_markup(options=['Отменить'], callback=['add_record_terminate'])
-        self.BO.edit_message(chat_id=chat.id, message_id=main_message_id, text=f'Зафиксировал время {user_time}',
+        self.BO.edit_message(chat_id=chat.id, message_id=main_message_id, text=f'Зафиксировал время {user_time_local}',
                              reply_markup=markup)
 
         params['add_record']['tmp_record'] = tmp_record
