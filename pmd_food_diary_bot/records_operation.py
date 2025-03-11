@@ -85,7 +85,7 @@ class AddRecord(RecordsOperations):
         interval = current_time - relativedelta(minutes=minutes_back)
         user_time = interval.strftime('%Y-%m-%d %H:%M %Z')
 
-        user_time_local = interval.astimezone(pytz.timezone(tzinfo)).strftime('%Y-%m-%d %H:%M %Z')
+        user_time_local = interval.astimezone(pytz.timezone(tzinfo)).strftime('%Y-%m-%d %H:%M')
         tmp_record[step_name] = user_time
 
         markup = self.BO.quick_markup(options=['Отменить'], callback=['add_record_terminate'])
@@ -105,6 +105,8 @@ class AddRecord(RecordsOperations):
         user_value = message.text
         if user_value[0] == '/':
             message_text = 'Название записи не может начинаться с технических символов'
+            self.terminate(chat=message.chat, message_text=message_text)
+            return None
         params['add_record']['user_value'] = user_value
 
         step_name = self.config.add_record_steps[1]
