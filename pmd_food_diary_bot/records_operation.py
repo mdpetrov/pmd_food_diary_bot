@@ -124,6 +124,6 @@ class AddRecord(RecordsOperations):
         params = self.PO.load_params(chat=chat)
         params['add_record'] = {}
         self.PO.save_params(params=params, chat=chat)
-        message_text = f"Операция отменена: \n{message_text}"
+        message_text = f"Операция отменена. \n{message_text}"
         self.BO.send_message(chat=chat, text=message_text)
         self.BO.clear_step_handler_by_chat_id(chat.id)
