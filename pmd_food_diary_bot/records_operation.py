@@ -122,8 +122,12 @@ class AddRecord(RecordsOperations):
 
     def terminate(self, chat, message_text=''):
         params = self.PO.load_params(chat=chat)
+        main_message_id = params['add_record'].setdefault('main_message_id', 0)
+        if main_message_id > 0:
+            self.BO.delete_message(chat_id=chat.id, message_id=main_message_id)
         params['add_record'] = {}
+
         self.PO.save_params(params=params, chat=chat)
-        message_text = f"Операция отменена. \n{message_text}"
+        message_text = f"Операция отменена. {message_text}"
         self.BO.send_message(chat=chat, text=message_text)
         self.BO.clear_step_handler_by_chat_id(chat.id)
