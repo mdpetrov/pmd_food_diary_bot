@@ -49,8 +49,8 @@ class AddRecord(RecordsOperations):
         if step == 1:
             self.step1_pre(params, chat)
         elif step == 2:
-            self.step1_action(params)
-            self.step2_pre(params, chat_id)
+            self.step1_action(params, chat=chat)
+            self.step2_pre(params, chat=chat)
             self.BO.register_next_step_handler_by_chat_id(chat_id=chat.id, callback=self.step2_action, params=params)
         # elif step == 3:
             # self.step2_action(params)
@@ -74,23 +74,25 @@ class AddRecord(RecordsOperations):
         message = self.BO.send_message(chat=chat, text=message_text, reply_markup=markup)
         params['add_record']['main_message_id'] = message.id
 
-    def step1_action(self, params):
+    def step1_action(self, params, chat):
         step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
+        main_message_id = params['add_record']['main_message_id']
 
         current_time = datetime.now().astimezone(pytz.utc)
         minutes_back = int(params['add_record']['user_value'])
         interval = current_time - relativedelta(minutes = minutes_back)
-        tmp_record[step_name] = interval.strftime('%Y-%m-%d %H:%M')
+        user_time = interval.strftime('%Y-%m-%d %H:%M %Z')
+        tmp_record[step_name] = user_time
+        self.BO.edit_message(chat_id=chat.id, message_id=main_message_id, text=f'Зафиксировал время {user_time}')
+
         params['add_record']['tmp_record'] = tmp_record
 
-    def step2_pre(self, params, chat_id):
+    def step2_pre(self, params, chat):
         main_message_id = params['add_record'].setdefault('main_message_id', 0)
-        message_text = 'Время зафиксировал! Теперь введи название записи:'
-        if main_message_id > 0:
-            self.BO.edit_message(chat_id=chat_id, message_id=main_message_id, text=message_text)
-        else:
-            raise NotImplementedError('Main message has not been found on step 2. Something is wrong')
+        message_text = 'Теперь введи название записи:'
+        self.BO.send_message(chat=chat, text=message_text)
+
 
 
     def step2_action(self, message, params):
