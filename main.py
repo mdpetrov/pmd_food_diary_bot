@@ -65,11 +65,12 @@ def get_message_show_records(message):
     text_split = []
     # records.insert(0, ['#', 'Время', 'Запись'])
 
-    for i,record in enumerate(records[1:]):
+    for i,record in enumerate(records):
         if i == 0:
             text_split.append(['#', 'Время', 'Запись'])
-        text_split.append([i] + record)
-    text = '\n'.join(['\t'.join(x) for x in text_split])
+        record_corr = [str(i + 1), record['datetime'], record['user_record']]
+        text_split.append(record_corr)
+    text = '\n'.join(['\t\t'.join(x) for x in text_split])
     text = f"Список записей: \n{text}"
     BO.send_message(message.chat, text=text)
 
@@ -87,6 +88,7 @@ def callback_add_record(call):
     PO.save_params(chat=call.message.chat, params=params)
 
     AR.main(chat=call.message.chat)
+    bot.answer_callback_query(call.id)
 
 
 if __name__ == '__main__':

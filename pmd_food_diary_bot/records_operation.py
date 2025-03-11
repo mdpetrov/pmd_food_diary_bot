@@ -3,6 +3,7 @@ import time
 import json
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+import pytz
 
 from pmd_food_diary_bot.params_operation import ParamsOperations
 from pmd_food_diary_bot.bot_operation import BotOperations
@@ -76,7 +77,10 @@ class AddRecord(RecordsOperations):
     def step1_action(self, params):
         step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
-        interval = datetime.now() - relativedelta(minutes = int(params['add_record']['user_value']))
+
+        current_time = datetime.now().astimezone(pytz.utc)
+        minutes_back = int(params['add_record']['user_value'])
+        interval = current_time - relativedelta(minutes = minutes_back)
         tmp_record[step_name] = interval.strftime('%Y-%m-%d %H:%M')
         params['add_record']['tmp_record'] = tmp_record
 
