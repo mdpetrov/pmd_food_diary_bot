@@ -83,6 +83,7 @@ def callback_add_record(call):
     if data_split[2] == 'terminate':
         AR.terminate(chat=call.message.chat, message_text='')
         bot.answer_callback_query(call.id)
+        return None
 
     if len(params['add_record']) == 0:
         BO.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
