@@ -64,12 +64,12 @@ def get_message_start(message):
 @bot.message_handler(chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
 def get_message(message):
     PO.check_param_keys(chat=message.chat, add_only=True)
-    if message.text == 'add_record':
+    if message.text == '/add_record':
         params = PO.load_params(message.chat)
         params['add_record'] = {}
         PO.save_params(chat=message.chat, params=params)
         AR.main(chat=message.chat)
-    elif message.text == 'show_records':
+    elif message.text == '/show_records':
         RO.show_records(chat=message.chat)
 
 
