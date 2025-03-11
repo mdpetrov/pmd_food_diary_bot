@@ -51,7 +51,7 @@ class RecordsOperations(object):
 
         records = self.load_records(chat=chat)
         records_df = pd.DataFrame.from_dict(records)
-        records_df.apply(self._set_local_timezone, axis=1, tzinfo=tzinfo)
+        records_df['datetime'] = records_df.apply(self._set_local_timezone, axis=1, tzinfo=tzinfo)
 
         records_df.columns = records_df.columns.map(column_locale_map)
         records_df.reset_index(drop=False, inplace=True)
