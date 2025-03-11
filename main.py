@@ -1,14 +1,16 @@
+import pytz
 import telebot
-from telebot import types
-from telebot.util import quick_markup
-import random
-import datetime
+# from telebot import types
+# from telebot.util import quick_markup
+# import random
+from datetime import datetime
+from dateutil import parser
 import time
-import json
+# import json
 import os
-import numpy as np
-import pandas as pd
-import re
+# import numpy as np
+# import pandas as pd
+# import re
 
 import logging
 
@@ -42,11 +44,16 @@ AR = AddRecord(config=config, bot=bot)
 
 @bot.message_handler(commands=['start'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
 def get_message_start(message):
-    start_text = '''Дневник еды 
+    start_text = '''Дневник питания 
 Список команд:
 /start - Главное меню
+
+Операции с записями:
 /add_record - Добавить запись
 /show_records - Вывести список записей
+
+Настройки:
+/settings - Настройки
 '''
     BO.send_message(message.chat, text=start_text)
 
@@ -61,6 +68,8 @@ def get_message_add_record(message):
 
 @bot.message_handler(commands=['show_records'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
 def get_message_show_records(message):
+    params = PO.load_params(message.chat)
+    tzinfo = params['timezone']
     records = AR.load_records(chat=message.chat)
     text_split = []
     # records.insert(0, ['#', 'Время', 'Запись'])
@@ -68,7 +77,10 @@ def get_message_show_records(message):
     for i,record in enumerate(records):
         if i == 0:
             text_split.append(['#', 'Время', 'Запись'])
-        record_corr = [str(i + 1), record['datetime'], record['user_record']]
+        dt_base = parser.parse(record['datetime'])
+        dt_local = dt_base.astimezone(tzinfo)
+
+        record_corr = [str(i + 1), dt_local.strftime('%Y-%m-%d %H:%M'), record['user_record']]
         text_split.append(record_corr)
     text = '\n'.join(['\t\t'.join(x) for x in text_split])
     text = f"Список записей: \n{text}"

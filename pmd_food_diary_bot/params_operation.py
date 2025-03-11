@@ -6,7 +6,8 @@ class ParamsOperations(object):
     """Class to store user related technical params"""
     def __init__(self, config):
         self.def_params = {'last_time_message_sent':0,
-                           'add_record':{}}
+                           'add_record':{},
+                           'timezone':'Europe/Moscow'}
         self.config = config
 
     def load_params(self, chat):
