@@ -66,6 +66,7 @@ def get_message_add_record(message):
 
     AR.main(chat=message.chat)
 
+
 @bot.message_handler(commands=['show_records'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 5))
 def get_message_show_records(message):
     params = PO.load_params(message.chat)
@@ -73,7 +74,7 @@ def get_message_show_records(message):
     records = AR.load_records(chat=message.chat)
     text_split = []
 
-    for i,record in enumerate(records):
+    for i, record in enumerate(records):
         if i == 0:
             text_split.append(['#', 'Время', 'Запись'])
         dt_base = parser.parse(record['datetime'])
@@ -85,13 +86,22 @@ def get_message_show_records(message):
     text = f"Список записей: \n{text}"
     BO.send_message(message.chat, text=text)
 
-@bot.callback_query_handler(func=lambda call: (call.data.find('add_record_step_') >= 0) &
+
+@bot.callback_query_handler(func=lambda call: (call.data.find('add_record_') >= 0) &
                                               (time.time() - call.message.date <= 60 * 60 * 24))
 def callback_add_record(call):
     params = PO.load_params(call.message.chat)
-
     data_split = call.data.split('_')
-    step = int(data_split[data_split.index('step') + 1])
+    if data_split[2] == 'terminate':
+        AR.terminate(chat=call.message.chat, message_text='')
+        bot.answer_callback_query(call.id)
+
+    if len(params['add_record']) == 0:
+        BO.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        return None
+
+    # step = int(data_split[data_split.index('step') + 1])
+    step = params['add_record']['step']
     user_value = str(data_split[-1])
     params['add_record']['step'] = step + 1
     params['add_record']['user_value'] = user_value
@@ -101,11 +111,12 @@ def callback_add_record(call):
     AR.main(chat=call.message.chat)
     bot.answer_callback_query(call.id)
 
-@bot.callback_query_handler(func=lambda call: (call.data == 'add_record_terminate') &
-                                              (time.time() - call.message.date <= 60 * 60 * 24))
-def callback_add_record_terminate(call):
-    AR.terminate(chat=call.message.chat, message_text='')
-    bot.answer_callback_query(call.id)
+
+# @bot.callback_query_handler(func=lambda call: (call.data == 'add_record_terminate') &
+#                                               (time.time() - call.message.date <= 60 * 60 * 24))
+# def callback_add_record_terminate(call):
+#     pass
+
 
 if __name__ == '__main__':
     while True:
