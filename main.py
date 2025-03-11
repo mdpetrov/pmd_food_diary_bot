@@ -44,9 +44,9 @@ AR = AddRecord(config=config, bot=bot)
 def get_message_start(message):
     start_text = '''Дневник еды 
 Список команд:
-    /start - вывести стартовое сообщение
-    /add_record - добавить запись
-    /show_records - вывести список записей
+/start - Главное меню
+/add_record - Добавить запись
+/show_records - Вывести список записей
 '''
     BO.send_message(message.chat, text=start_text)
 
