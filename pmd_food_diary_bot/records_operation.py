@@ -52,6 +52,7 @@ class RecordsOperations(object):
         records = self.load_records(chat=chat)
         records_df = pd.DataFrame.from_dict(records)
         records_df['datetime'] = records_df.apply(self._set_local_timezone, axis=1, tzinfo=tzinfo)
+        records_df.sort_values(['datetime'], ascending=[True], inplace=True)
 
         records_df.index = records_df.index.map(lambda x: x + 1)
         records_df.columns = records_df.columns.map(column_locale_map)
