@@ -14,6 +14,11 @@ class OutputTextOperation(object):
         self.PO = ParamsOperations(config=config)
     def get_record_steps_name(self, chat):
         params = self.PO.load_params(chat)
-        locale = params['locale']
+        locale = params['user_settings']['locale']
         record_steps_name_map = self.config.add_record_steps_translation[locale]
         return record_steps_name_map
+    def get_user_settings_name(self, chat):
+        params = self.PO.load_params(chat)
+        locale = params['user_settings']['locale']
+        user_settings_name_map = self.config.user_settings_translation[locale]
+        return user_settings_name_map

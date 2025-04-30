@@ -21,7 +21,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # Custom packages
 
 from pmd_food_diary_bot.config import config
-from pmd_food_diary_bot.params_operation import ParamsOperations
+from pmd_food_diary_bot.params_operation import ParamsOperations, UserSettings
 from pmd_food_diary_bot.log_operation import LogOperations
 from pmd_food_diary_bot.bot_operation import BotOperations
 from pmd_food_diary_bot.records_operation import RecordsOperations, AddRecord
@@ -40,6 +40,7 @@ LO = LogOperations(config=config)
 BO = BotOperations(bot=bot, config=config)
 RO = RecordsOperations(config=config, bot=bot)
 AR = AddRecord(config=config, bot=bot)
+US = UserSettings(config=config)
 
 
 # OTO = OutputTextOperation(config=config)
@@ -100,6 +101,10 @@ def callback_add_record(call):
     AR.main(chat=call.message.chat)
     bot.answer_callback_query(call.id)
 
+@bot.message_handler(commands=['settings'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
+def get_message_settings(message):
+    text_settings = US.show_settings(chat=message.chat)
+    BO.send_message(message.chat, text=text_settings)
 
 if __name__ == '__main__':
     while True:

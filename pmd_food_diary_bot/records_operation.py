@@ -46,7 +46,7 @@ class RecordsOperations(object):
 
     def show_records(self, chat):
         params = self.PO.load_params(chat)
-        tzinfo = params['timezone']
+        tzinfo = params['user_settings']['timezone']
         column_locale_map = self.OTO.get_record_steps_name(chat=chat)
 
         records = self.load_records(chat=chat)
@@ -104,7 +104,7 @@ class AddRecord(RecordsOperations):
         params['add_record']['main_message_id'] = message.id
 
     def step1_action(self, params, chat):
-        tzinfo = params['timezone']
+        tzinfo = params['user_settings']['timezone']
         step_name = self.config.add_record_steps[0]
         tmp_record = params['add_record'].setdefault('tmp_record', {})
         main_message_id = params['add_record']['main_message_id']

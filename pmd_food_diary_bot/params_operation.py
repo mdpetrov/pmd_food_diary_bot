@@ -2,14 +2,21 @@ import json
 from os.path import join, isfile
 import time
 
+from pmd_food_diary_bot.output_text_operation import OutputTextOperation
+
+
 class ParamsOperations(object):
     """Class to store user related technical params"""
+
     def __init__(self, config):
-        self.def_params = {'last_time_message_sent':0,
-                           'add_record':{},
-                           'timezone':'Europe/Moscow',
-                           'locale':'ru'}
+        self.def_params = {'last_time_message_sent': 0,
+                           'add_record': {},
+                           'user_settings': {
+                               'timezone': 'Europe/Moscow',
+                               'locale': 'ru',
+                               'notification': {}}}
         self.config = config
+        self.OTO = OutputTextOperation(config=config)
 
     def load_params(self, chat):
         """Load json with local parameters for the chat"""
@@ -59,3 +66,18 @@ class ParamsOperations(object):
             else:
                 params[key] = def_params[key]
         self.save_params(chat, params)
+
+
+class UserSettings(ParamsOperations):
+    """Class for user to change some settings"""
+
+    def show_settings(self, chat):
+        params = self.load_params(chat)
+        settins_locale_map = self.OTO.get_user_settings_name(chat=chat)
+        settings = params['user_settings']
+
+        text = ""
+        for setting, value in settings.items():
+            text += f"{settins_locale_mapх[setting]} : {value}\n"
+
+        return text
