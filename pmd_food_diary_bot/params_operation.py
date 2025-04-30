@@ -32,8 +32,8 @@ class ParamsOperations(object):
             if not isinstance(params, dict):
                 error_text = f'''Loaded params object has type {type(params)} instead of {type(dict)}
     Debug info:
-    \tChat id: {chat_id}'''
-    # \tChat name: {chat_id} # Will be added in future
+    \tChat id: {chat_id}
+    \tChat name: {chat_username}'''  # Will be added in future
                 raise TypeError(error_text)
         else:
             params = self.def_params
@@ -46,8 +46,8 @@ class ParamsOperations(object):
         if not isinstance(params, dict):
             error_text = f'''Params object has type {type(params)} instead of {type(dict)}
     Debug info:
-    \tChat id: {chat_id}'''
-    # \tChat name: {chat_id} # Will be added in future
+    \tChat id: {chat_id}
+    \tChat name: {chat_username} '''
             raise TypeError(error_text)
         param_dir = self.config.path['param_dir']
         param_name = f"{chat_id}_{chat_username}.json"
